@@ -27,6 +27,7 @@ jobs:
         git clone "https://$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
     - name: Script
       run: |
+        export LC_ALL=en_US.UTF-8
         cd ip-geolocation-dbs
         bash update.sh
         git config --global user.email "$GITLAB_USER_EMAIL"
@@ -36,6 +37,7 @@ jobs:
         git gc
         git push origin "HEAD:$CI_DEFAULT_BRANCH" -f
         cp README.md CHANGELOG.md ..
-        cd ..
+    - name: After script
+      run: |
         git commit -am "Updated databases $(date -u +%F)."
         git push
