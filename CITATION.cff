@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: IP Geolocation Databases
+message: >-
+  If you use this dataset, please cite it using the metadata
+  from this file.
+type: dataset
+authors:
+  - given-names: Teal
+    family-names: Dulcet
+    orcid: 'https://orcid.org/0009-0008-6616-2631'
+repository-code: 'https://github.com/tdulcet/ip-geolocation-dbs'
+repository: 'https://gitlab.com/tdulcet/ip-geolocation-dbs'
+abstract: >-
+  Prepossessed free IPv4 and IPv6 Geolocation databases in
+  CSV format that are automatically updated daily.
+license: GPL-3.0

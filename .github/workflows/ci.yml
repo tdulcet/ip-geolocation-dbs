@@ -20,6 +20,7 @@ jobs:
       KEY: ${{ secrets.KEY }}
       TOKEN1: ${{ secrets.TOKEN1 }}
       TOKEN2: ${{ secrets.TOKEN2 }}
+      TOKEN: ${{ secrets.TOKEN }}
     steps:
     - uses: actions/checkout@v3
     - name: Before script
@@ -32,6 +33,7 @@ jobs:
         bash update.sh
         git config --global user.email "$GITLAB_USER_EMAIL"
         git config --global user.name "$GITLAB_USER_NAME"
+        git config --global http.postBuffer $((1024 ** 3))
         bash commit.sh
         git remote set-url origin "https://$GITLAB_USER_NAME:$ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
         git gc
