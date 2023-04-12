@@ -33,10 +33,12 @@ jobs:
         bash update.sh
         git config --global user.email "$GITLAB_USER_EMAIL"
         git config --global user.name "$GITLAB_USER_NAME"
-        git config --global http.postBuffer $((1024 ** 3))
+        git config --global http.postBuffer $((2 * 1024 ** 3))
         bash commit.sh
         git remote set-url origin "https://$GITLAB_USER_NAME:$ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
+        free -wh
         git gc
+        free -wh
         git push origin "HEAD:$CI_DEFAULT_BRANCH" -f
         cp README.md CHANGELOG.md ..
     - name: After script
