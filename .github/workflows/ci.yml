@@ -12,6 +12,7 @@ jobs:
     env:
       GITLAB_USER_NAME: ${{ github.repository_owner }}
       CI_SERVER_HOST: gitlab.com
+      CI_PROJECT_NAME: ${{ github.event.repository.name }}
       CI_PROJECT_PATH: ${{ github.repository }}
       CI_PROJECT_URL: "https://gitlab.com/${{ github.repository }}"
       CI_DEFAULT_BRANCH: main
@@ -29,7 +30,7 @@ jobs:
     - name: Script
       run: |
         export LC_ALL=en_US.UTF-8
-        cd ip-geolocation-dbs
+        cd "$CI_PROJECT_NAME"
         bash update.sh
         git config --global user.email "$GITLAB_USER_EMAIL"
         git config --global user.name "$GITLAB_USER_NAME"
@@ -40,6 +41,7 @@ jobs:
         git gc
         free -wh
         git push origin "HEAD:$CI_DEFAULT_BRANCH" -f
+        curl -X POST -H "PRIVATE-TOKEN: $ACCESS_TOKEN" "https://$CI_SERVER_HOST/api/v4/projects/$GITLAB_USER_NAME%2F$CI_PROJECT_NAME/housekeeping?task=prune"
         cp README.md CHANGELOG.md ..
     - name: After script
       run: |

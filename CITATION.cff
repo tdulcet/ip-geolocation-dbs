@@ -11,6 +11,6 @@ authors:
 repository-code: 'https://github.com/tdulcet/ip-geolocation-dbs'
 repository: 'https://gitlab.com/tdulcet/ip-geolocation-dbs'
 abstract: >-
-  Prepossessed free IPv4 and IPv6 Geolocation databases in
+  Preprocessed free IPv4 and IPv6 Geolocation databases in
   CSV format that are automatically updated daily.
 license: GPL-3.0
