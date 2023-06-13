@@ -3,6 +3,7 @@ name: CI
 on:
   schedule:
     - cron:  '0 12 * * *'
+  workflow_dispatch:
 
 jobs:
   update:
@@ -16,8 +17,6 @@ jobs:
       CI_PROJECT_PATH: ${{ github.repository }}
       CI_PROJECT_URL: "https://gitlab.com/${{ github.repository }}"
       CI_DEFAULT_BRANCH: main
-      GITLAB_USER_EMAIL: ${{ secrets.GITLAB_USER_EMAIL }}
-      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       KEY: ${{ secrets.KEY }}
       TOKEN1: ${{ secrets.TOKEN1 }}
       TOKEN2: ${{ secrets.TOKEN2 }}
@@ -26,22 +25,23 @@ jobs:
     - uses: actions/checkout@v3
     - name: Before script
       run: |
+        wget https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh -qO - | bash -s
         git clone "https://$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
     - name: Script
       run: |
         export LC_ALL=en_US.UTF-8
         cd "$CI_PROJECT_NAME"
         bash update.sh
-        git config --global user.email "$GITLAB_USER_EMAIL"
+        git config --global user.email "${{ secrets.GITLAB_USER_EMAIL }}"
         git config --global user.name "$GITLAB_USER_NAME"
         git config --global http.postBuffer $((2 * 1024 ** 3))
         bash commit.sh
-        git remote set-url origin "https://$GITLAB_USER_NAME:$ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
+        git remote set-url origin "https://$GITLAB_USER_NAME:${{ secrets.ACCESS_TOKEN }}@$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
         free -wh
         git gc
         free -wh
         git push origin "HEAD:$CI_DEFAULT_BRANCH" -f
-        curl -X POST -H "PRIVATE-TOKEN: $ACCESS_TOKEN" "https://$CI_SERVER_HOST/api/v4/projects/$GITLAB_USER_NAME%2F$CI_PROJECT_NAME/housekeeping?task=prune"
+        curl -sS -X POST -H "PRIVATE-TOKEN: ${{ secrets.ACCESS_TOKEN }}" "https://$CI_SERVER_HOST/api/v4/projects/$GITLAB_USER_NAME%2F$CI_PROJECT_NAME/housekeeping?task=prune"
         cp README.md CHANGELOG.md ..
     - name: After script
       run: |
