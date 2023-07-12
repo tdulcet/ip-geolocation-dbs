@@ -26,7 +26,7 @@ jobs:
     - name: Before script
       run: |
         wget https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh -qO - | bash -s
-        git clone "https://$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
+        git clone --filter=blob:none "https://$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
     - name: Script
       run: |
         export LC_ALL=en_US.UTF-8
