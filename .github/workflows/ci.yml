@@ -22,7 +22,7 @@ jobs:
       TOKEN2: ${{ secrets.TOKEN2 }}
       TOKEN: ${{ secrets.TOKEN }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Before script
       run: |
         wget https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh -qO - | bash -s
