@@ -3,6 +3,10 @@
 ### Unreleased
 
 
+### 2024-09-16
+- [Updated databases 2024-09-16.](https://gitlab.com/tdulcet/ip-geolocation-dbs/-/commit/3bef67fcf7600c3bd8d520e9bce74f6e2cbf48d8)
+
+
 ### 2024-09-15
 - [Updated databases 2024-09-15.](https://gitlab.com/tdulcet/ip-geolocation-dbs/-/commit/23162caf60ad6d2c69ac09896e392990cd235c2f)
 
