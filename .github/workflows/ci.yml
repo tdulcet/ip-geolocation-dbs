@@ -5,18 +5,20 @@ on:
     - cron:  '0 12 * * *'
   workflow_dispatch:
 
+env:
+  GITLAB_USER_NAME: ${{ github.repository_owner }}
+  CI_SERVER_HOST: gitlab.com
+  CI_PROJECT_NAME: ${{ github.event.repository.name }}
+  CI_PROJECT_PATH: ${{ github.repository }}
+  CI_PROJECT_URL: "https://gitlab.com/${{ github.repository }}"
+  CI_DEFAULT_BRANCH: main
+
 jobs:
   update:
     name: Update databases
 
     runs-on: ubuntu-latest
     env:
-      GITLAB_USER_NAME: ${{ github.repository_owner }}
-      CI_SERVER_HOST: gitlab.com
-      CI_PROJECT_NAME: ${{ github.event.repository.name }}
-      CI_PROJECT_PATH: ${{ github.repository }}
-      CI_PROJECT_URL: "https://gitlab.com/${{ github.repository }}"
-      CI_DEFAULT_BRANCH: main
       KEY: ${{ secrets.KEY }}
       TOKEN1: ${{ secrets.TOKEN1 }}
       TOKEN2: ${{ secrets.TOKEN2 }}
@@ -25,7 +27,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Before script
       run: |
-        wget https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh -qO - | bash -s
+        wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s
         git clone --filter=blob:none "https://$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
     - name: Script
       run: |
@@ -34,14 +36,14 @@ jobs:
         bash update.sh
         git config --global user.email "${{ secrets.GITLAB_USER_EMAIL }}"
         git config --global user.name "$GITLAB_USER_NAME"
-        git config --global http.postBuffer $((2 * 1024 ** 3))
+        git config --global http.postBuffer $((2 << 30))
         bash commit.sh
         git remote set-url origin "https://$GITLAB_USER_NAME:${{ secrets.ACCESS_TOKEN }}@$CI_SERVER_HOST/$CI_PROJECT_PATH.git"
         free -wh
-        git gc
+        git gc --prune=30.minutes.ago
+        git lfs prune -d
         free -wh
         git push origin "HEAD:$CI_DEFAULT_BRANCH" -f
-        curl -sS -X POST -H "PRIVATE-TOKEN: ${{ secrets.ACCESS_TOKEN }}" "https://$CI_SERVER_HOST/api/v4/projects/$GITLAB_USER_NAME%2F$CI_PROJECT_NAME/housekeeping?task=prune"
         cp README.md CHANGELOG.md ..
     - name: After script
       run: |
@@ -50,3 +52,7 @@ jobs:
         fi
         git commit -am "Updated databases $(date -u +%F)."
         git push
+    - name: Prune
+      if: always()
+      run: |
+        curl -sS -X POST -H "PRIVATE-TOKEN: ${{ secrets.ACCESS_TOKEN }}" "https://$CI_SERVER_HOST/api/v4/projects/$GITLAB_USER_NAME%2F$CI_PROJECT_NAME/housekeeping?task=prune"
