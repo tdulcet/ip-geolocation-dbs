@@ -55,4 +55,4 @@ jobs:
     - name: Prune
       if: always()
       run: |
-        curl -sS -X POST -H "PRIVATE-TOKEN: ${{ secrets.ACCESS_TOKEN }}" "https://$CI_SERVER_HOST/api/v4/projects/$GITLAB_USER_NAME%2F$CI_PROJECT_NAME/housekeeping?task=prune"
+        curl -sSf -X POST -H "PRIVATE-TOKEN: ${{ secrets.ACCESS_TOKEN }}" "https://$CI_SERVER_HOST/api/v4/projects/$GITLAB_USER_NAME%2F$CI_PROJECT_NAME/housekeeping?task=prune"
