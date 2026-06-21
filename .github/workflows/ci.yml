@@ -43,7 +43,7 @@ jobs:
         git gc --prune=30.minutes.ago
         git lfs prune -d
         free -wh
-        git push origin "HEAD:$CI_DEFAULT_BRANCH" -f
+        git push --force-with-lease origin "HEAD:$CI_DEFAULT_BRANCH"
         cp README.md CHANGELOG.md ..
     - name: After script
       run: |
